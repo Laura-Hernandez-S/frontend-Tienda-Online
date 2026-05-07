@@ -1,6 +1,7 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -41,7 +42,7 @@ export class UsuarioDialogComponent {
     nombre_usuario: ['', Validators.required],
     email: ['', [Validators.required, Validators.email]],
     contrasena: [''],
-    rol: [''],
+    rol: ['usuario', Validators.required],
     activo: [true],
   });
 
@@ -84,9 +85,9 @@ export class UsuarioDialogComponent {
         .create({
           nombre_usuario: v.nombre_usuario,
           email: v.email,
-          clave: v.contrasena,
-          nombre_completo: '',
-          rol: ''
+          contrasena: v.contrasena,
+          rol: v.rol,
+          activo: v.activo,
         })
         .subscribe({
           next: () => this.dialogRef.close(true),
@@ -108,7 +109,7 @@ export class UsuarioDialogComponent {
     };
 
     if (v.contrasena?.trim()) {
-      body.clave = v.contrasena;
+      body.contrasena = v.contrasena;
     }
 
     this.usuarioService.update(id, body).subscribe({
@@ -120,8 +121,13 @@ export class UsuarioDialogComponent {
 
   private msg(err: HttpErrorResponse): string {
     const d = err.error?.detail;
+
     if (typeof d === 'string') return d;
-    if (Array.isArray(d)) return d.map((x) => x.msg ?? JSON.stringify(x)).join('; ');
+
+    if (Array.isArray(d)) {
+      return d.map((x) => x.msg ?? JSON.stringify(x)).join('; ');
+    }
+
     return err.message;
   }
 }

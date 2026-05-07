@@ -33,11 +33,10 @@ export class PagoListComponent implements AfterViewInit {
   private readonly snack = inject(MatSnackBar);
 
   readonly displayedColumns = [
-    'nombre',
+    'id_pago',
     'id_pedido',
-    'referencia',
-    'tipo_pago',
-    'estado',
+    'metodo_pago',
+    'monto_pagado',
     'acciones',
   ];
   readonly dataSource = new MatTableDataSource<PagoRead>([]);
@@ -86,7 +85,7 @@ export class PagoListComponent implements AfterViewInit {
   }
 
   eliminar(row: PagoRead): void {
-    if (!confirm(`¿Eliminar pago ${row.nombre}?`)) return;
+    if (!confirm(`¿Eliminar pago ${this.shortId(row.id_pago)}?`)) return;
     this.svc.delete(row.id_pago).subscribe({
       next: () => {
         this.snack.open('Pago eliminado', 'OK', { duration: 3000 });

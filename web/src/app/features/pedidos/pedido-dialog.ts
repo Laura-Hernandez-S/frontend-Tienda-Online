@@ -43,11 +43,10 @@ export class PedidoDialogComponent implements OnInit {
 
   readonly usuarios = signal<UsuarioRead[]>([]);
 
+  // CORRECCIÓN: Solo id_usuario y total_pagado
   readonly form = this.fb.nonNullable.group({
     id_usuario: ['', Validators.required],
-    nombre: ['', Validators.required],
-    descripcion: [''],
-    estado: [''],
+    total_pagado: [0, [Validators.required, Validators.min(0)]],
   });
 
   ngOnInit(): void {
@@ -59,9 +58,7 @@ export class PedidoDialogComponent implements OnInit {
       const r = this.data.row;
       this.form.patchValue({
         id_usuario: r.id_usuario,
-        nombre: r.nombre,
-        descripcion: r.descripcion ?? '',
-        estado: r.estado ?? '',
+        total_pagado: r.total_pagado,
       });
     }
   }
@@ -85,9 +82,7 @@ export class PedidoDialogComponent implements OnInit {
       this.svc
         .create({
           id_usuario: v.id_usuario,
-          nombre: v.nombre,
-          descripcion: v.descripcion || null,
-          estado: v.estado || null,
+          total_pagado: v.total_pagado, // CORRECCIÓN
           id_usuario_creacion: uid,
         })
         .subscribe({
@@ -99,9 +94,7 @@ export class PedidoDialogComponent implements OnInit {
     this.svc
       .update(this.data.row!.id_pedido, {
         id_usuario: v.id_usuario,
-        nombre: v.nombre,
-        descripcion: v.descripcion || null,
-        estado: v.estado || null,
+        total_pagado: v.total_pagado, // CORRECCIÓN
         id_usuario_edita: uid,
       })
       .subscribe({

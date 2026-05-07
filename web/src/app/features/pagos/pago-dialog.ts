@@ -45,11 +45,8 @@ export class PagoDialogComponent implements OnInit {
 
   readonly form = this.fb.nonNullable.group({
     id_pedido: ['', Validators.required],
-    nombre: ['', Validators.required],
-    descripcion: [''],
-    estado: [''],
-    referencia: ['', Validators.required],
-    tipo_pago: ['', Validators.required],
+    metodo_pago: ['', Validators.required],
+    monto_pagado: [0, [Validators.required, Validators.min(0)]]
   });
 
   ngOnInit(): void {
@@ -61,11 +58,8 @@ export class PagoDialogComponent implements OnInit {
       const r = this.data.row;
       this.form.patchValue({
         id_pedido: r.id_pedido,
-        nombre: r.nombre,
-        descripcion: r.descripcion ?? '',
-        estado: r.estado ?? '',
-        referencia: r.referencia,
-        tipo_pago: r.tipo_pago,
+        metodo_pago: r.metodo_pago,
+        monto_pagado: r.monto_pagado
       });
     }
   }
@@ -89,11 +83,8 @@ export class PagoDialogComponent implements OnInit {
       this.svc
         .create({
           id_pedido: v.id_pedido,
-          nombre: v.nombre,
-          descripcion: v.descripcion || null,
-          estado: v.estado || null,
-          referencia: v.referencia,
-          tipo_pago: v.tipo_pago,
+          metodo_pago: v.metodo_pago,
+          monto_pagado: v.monto_pagado,
           id_usuario_creacion: uid,
         })
         .subscribe({
@@ -105,11 +96,8 @@ export class PagoDialogComponent implements OnInit {
     this.svc
       .update(this.data.row!.id_pago, {
         id_pedido: v.id_pedido,
-        nombre: v.nombre,
-        descripcion: v.descripcion || null,
-        estado: v.estado || null,
-        referencia: v.referencia,
-        tipo_pago: v.tipo_pago,
+        metodo_pago: v.metodo_pago,
+        monto_pagado: v.monto_pagado,
         id_usuario_edita: uid,
       })
       .subscribe({

@@ -43,10 +43,13 @@ export class ProductoDialogComponent implements OnInit {
 
   readonly categorias = signal<CategoriaRead[]>([]);
 
+  // CORRECCIÓN: Nombres nuevos y agregamos precio y stock
   readonly form = this.fb.nonNullable.group({
     id_categoria: ['', Validators.required],
-    nombre: ['', Validators.required],
-    descripcion: [''],
+    nombre_producto: ['', Validators.required],
+    descripcion_producto: [''],
+    precio: [0, [Validators.required, Validators.min(0)]],
+    stock: [0, [Validators.required, Validators.min(0)]],
   });
 
   ngOnInit(): void {
@@ -58,8 +61,10 @@ export class ProductoDialogComponent implements OnInit {
       const r = this.data.row;
       this.form.patchValue({
         id_categoria: r.id_categoria,
-        nombre: r.nombre,
-        descripcion: r.descripcion ?? '',
+        nombre_producto: r.nombre_producto,
+        descripcion_producto: r.descripcion_producto ?? '',
+        precio: r.precio,
+        stock: r.stock,
       });
     }
   }
@@ -83,8 +88,10 @@ export class ProductoDialogComponent implements OnInit {
       this.svc
         .create({
           id_categoria: v.id_categoria,
-          nombre: v.nombre,
-          descripcion: v.descripcion || null,
+          nombre_producto: v.nombre_producto,
+          descripcion_producto: v.descripcion_producto || null,
+          precio: v.precio, // <-- Obligatorio
+          stock: v.stock,   // <-- Obligatorio
           id_usuario_creacion: uid,
         })
         .subscribe({
@@ -96,8 +103,10 @@ export class ProductoDialogComponent implements OnInit {
     this.svc
       .update(this.data.row!.id_producto, {
         id_categoria: v.id_categoria,
-        nombre: v.nombre,
-        descripcion: v.descripcion || null,
+        nombre_producto: v.nombre_producto,
+        descripcion_producto: v.descripcion_producto || null,
+        precio: v.precio,
+        stock: v.stock,
         id_usuario_edita: uid,
       })
       .subscribe({

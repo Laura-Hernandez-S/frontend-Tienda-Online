@@ -31,4 +31,14 @@ export class UsuarioService {
   delete(id: string): Observable<void> {
     return this.http.delete(`${this.base}/${id}`, { observe: 'response' }).pipe(map(() => undefined));
   }
+
+  login(email: string, contrasena: string): Observable<any> {
+  return this.http.post<any>(
+    `${this.base}/login`,
+    {
+      email,
+      contrasena,
+    },
+  );
+}
 }
