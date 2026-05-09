@@ -31,8 +31,9 @@ export class CategoriaListComponent implements AfterViewInit {
   private readonly dialog = inject(MatDialog);
   private readonly snack = inject(MatSnackBar);
 
+  // CORRECCIÓN AQUÍ: 'nombre_categoria'
   readonly displayedColumns = [
-    'nombre',
+    'nombre_categoria',
     'descripcion',
     'estado',
     'fecha_creacion',
@@ -82,7 +83,8 @@ export class CategoriaListComponent implements AfterViewInit {
   }
 
   eliminar(row: CategoriaRead): void {
-    if (!confirm(`¿Eliminar categoría ${row.nombre}?`)) return;
+    // CORRECCIÓN AQUÍ
+    if (!confirm(`¿Eliminar categoría ${row.nombre_categoria}?`)) return;
     this.svc.delete(row.id_categoria).subscribe({
       next: () => {
         this.snack.open('Categoría eliminada', 'OK', { duration: 3000 });

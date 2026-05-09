@@ -32,7 +32,8 @@ export class DetallePedidoListComponent implements AfterViewInit {
   private readonly dialog = inject(MatDialog);
   private readonly snack = inject(MatSnackBar);
 
-  readonly displayedColumns = ['nombre', 'id_pedido', 'id_producto', 'estado', 'acciones'];
+  // CORRECCIÓN: Columnas reales alineadas a Python
+  readonly displayedColumns = ['id_pedido', 'id_producto', 'cantidad', 'precio_unitario', 'acciones'];
   readonly dataSource = new MatTableDataSource<DetallePedidoRead>([]);
   loading = true;
 
@@ -79,7 +80,7 @@ export class DetallePedidoListComponent implements AfterViewInit {
   }
 
   eliminar(row: DetallePedidoRead): void {
-    if (!confirm(`¿Eliminar detalle ${row.nombre}?`)) return;
+    if (!confirm(`¿Eliminar detalle del pedido ${this.shortId(row.id_pedido)}?`)) return;
     this.svc.delete(row.id_detalle_pedido).subscribe({
       next: () => {
         this.snack.open('Detalle eliminado', 'OK', { duration: 3000 });
