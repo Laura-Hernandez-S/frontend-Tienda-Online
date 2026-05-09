@@ -32,7 +32,8 @@ export class ProductoListComponent implements AfterViewInit {
   private readonly dialog = inject(MatDialog);
   private readonly snack = inject(MatSnackBar);
 
-  readonly displayedColumns = ['nombre', 'id_categoria', 'descripcion', 'acciones'];
+  // CORRECCIÓN: Actualizamos columnas
+  readonly displayedColumns = ['nombre_producto', 'id_categoria', 'precio', 'stock', 'descripcion_producto', 'acciones'];
   readonly dataSource = new MatTableDataSource<ProductoRead>([]);
   loading = true;
 
@@ -79,7 +80,8 @@ export class ProductoListComponent implements AfterViewInit {
   }
 
   eliminar(row: ProductoRead): void {
-    if (!confirm(`¿Eliminar producto ${row.nombre}?`)) return;
+    // CORRECCIÓN: nombre_producto
+    if (!confirm(`¿Eliminar producto ${row.nombre_producto}?`)) return;
     this.svc.delete(row.id_producto).subscribe({
       next: () => {
         this.snack.open('Producto eliminado', 'OK', { duration: 3000 });

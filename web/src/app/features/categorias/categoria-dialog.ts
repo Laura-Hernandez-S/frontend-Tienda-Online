@@ -39,8 +39,9 @@ export class CategoriaDialogComponent {
 
   readonly data = inject<CategoriaDialogData>(MAT_DIALOG_DATA);
 
+  // CORRECCIÓN: Cambiado de 'nombre' a 'nombre_categoria'
   readonly form = this.fb.nonNullable.group({
-    nombre: ['', Validators.required],
+    nombre_categoria: ['', Validators.required],
     descripcion: [''],
     estado: [true],
   });
@@ -49,7 +50,7 @@ export class CategoriaDialogComponent {
     if (this.data.mode === 'edit' && this.data.row) {
       const r = this.data.row;
       this.form.patchValue({
-        nombre: r.nombre,
+        nombre_categoria: r.nombre_categoria,
         descripcion: r.descripcion ?? '',
         estado: r.estado,
       });
@@ -74,7 +75,7 @@ export class CategoriaDialogComponent {
     if (this.data.mode === 'create') {
       this.svc
         .create({
-          nombre: v.nombre,
+          nombre_categoria: v.nombre_categoria, // CORRECCIÓN
           descripcion: v.descripcion || null,
           estado: v.estado,
           id_usuario_creacion: uid,
@@ -87,7 +88,7 @@ export class CategoriaDialogComponent {
     }
     this.svc
       .update(this.data.row!.id_categoria, {
-        nombre: v.nombre,
+        nombre_categoria: v.nombre_categoria, // CORRECCIÓN
         descripcion: v.descripcion || null,
         estado: v.estado,
         id_usuario_edita: uid,
