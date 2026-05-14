@@ -1,28 +1,52 @@
-# Angular specific
+# =========================
+# ANGULAR
+# =========================
 /dist/
 /out-tsc/
 /tmp/
 /coverage/
-/e2e/test-output/
 /.angular/
-.angular/
-
-# Node modules and dependency files
-/node_modules/
-/package-lock.json
-/yarn.lock
-
-# Environment files
-/.env
-
-# Angular CLI and build artefacts
-/.angular-cli.json
-/.ng/
-
-# TypeScript cache
+.ng/
 *.tsbuildinfo
 
-# Logs
+# =========================
+# NODE
+# =========================
+/node_modules/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# =========================
+# ENVIRONMENTS
+# =========================
+.env
+
+# =========================
+# FIREBASE
+# =========================
+.firebase/
+
+# Credenciales privadas Firebase
+*firebase-adminsdk*.json
+
+# =========================
+# CACHE
+# =========================
+.cache/
+
+# =========================
+# IA / AGENTES
+# =========================
+.agents/
+
+# =========================
+# EDITORES
+# =========================
+.vscode/
+
+# =========================
+# SISTEMA OPERATIVO
+# =========================
+.DS_Store
+Thumbs.db
