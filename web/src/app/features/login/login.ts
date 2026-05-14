@@ -2,6 +2,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -14,8 +15,8 @@ import { UsuarioService } from '../../core/services/usuario.service';
 import { UsuarioRead } from '../../models/api.models';
 
 /**
- * Login de demostración: solo comprueba que el nombre de usuario exista en el API.
- * La contraseña no se valida contra el backend (hasta que exista autenticación real).
+ * Login temporal.
+ * Solo valida existencia de usuario.
  */
 @Component({
   selector: 'app-login',
@@ -40,19 +41,18 @@ export class LoginComponent implements OnInit {
 
   readonly loading = signal(true);
   readonly usuarios = signal<UsuarioRead[]>([]);
+  readonly registerMode = signal(false);
 
   readonly loginForm = this.fb.nonNullable.group({
-    nombre_usuario: ['', Validators.required],
-    clave: ['', Validators.required],
-  });
+  email: ['', [Validators.required, Validators.email]],
+  contrasena: ['', Validators.required],
+});
 
   readonly firstUserForm = this.fb.nonNullable.group({
-    nombre_completo: ['', Validators.required],
     nombre_usuario: ['', Validators.required],
     email: ['', [Validators.required, Validators.email]],
-    clave: ['', [Validators.required, Validators.minLength(4)]],
+    contrasena: ['', [Validators.required, Validators.minLength(4)]],
     rol: ['admin', Validators.required],
-    telefono: [''],
   });
 
   ngOnInit(): void {
@@ -61,6 +61,7 @@ export class LoginComponent implements OnInit {
 
   reload(): void {
     this.loading.set(true);
+
     this.usuarioService.list().subscribe({
       next: (rows) => {
         this.usuarios.set(rows);
@@ -68,61 +69,104 @@ export class LoginComponent implements OnInit {
       },
       error: (err: HttpErrorResponse) => {
         this.loading.set(false);
-        this.snack.open(this.msg(err), 'Cerrar', { duration: 6000 });
+        this.snack.open(this.msg(err), 'Cerrar', {
+          duration: 6000,
+        });
       },
     });
   }
 
+  showRegister(): void {
+  this.registerMode.set(true);
+}
+
+showLogin(): void {
+  this.registerMode.set(false);
+}
+
   ingresar(): void {
-    if (this.loginForm.invalid) {
-      this.loginForm.markAllAsTouched();
-      return;
-    }
-    const { nombre_usuario } = this.loginForm.getRawValue();
-    const key = nombre_usuario.trim().toLowerCase();
-    const u = this.usuarios().find(
-      (x) => x.nombre_usuario.trim().toLowerCase() === key,
-    );
-    if (!u) {
-      this.snack.open('Usuario no encontrado. Revisa el nombre o crea un usuario en la base.', 'Cerrar', {
-        duration: 5000,
-      });
-      return;
-    }
-    this.audit.select(u.id_usuario);
-    void this.router.navigateByUrl('/app');
+  if (this.loginForm.invalid) {
+    this.loginForm.markAllAsTouched();
+    return;
   }
+
+  const v = this.loginForm.getRawValue();
+
+  this.usuarioService
+    .login(
+      v.email,
+      v.contrasena,
+    )
+    .subscribe({
+      next: (resp) => {
+
+        this.audit.select(
+          resp.usuario.id_usuario,
+        );
+
+        void this.router.navigateByUrl('/app');
+      },
+
+      error: () => {
+        this.snack.open(
+          'Correo o contraseña incorrectos',
+          'Cerrar',
+          {
+            duration: 5000,
+          },
+        );
+      },
+    });
+}
 
   crearPrimero(): void {
     if (this.firstUserForm.invalid) {
       this.firstUserForm.markAllAsTouched();
       return;
     }
+
     const v = this.firstUserForm.getRawValue();
+
     this.usuarioService
       .create({
-        nombre_completo: v.nombre_completo,
         nombre_usuario: v.nombre_usuario,
         email: v.email,
-        clave: v.clave,
+        contrasena: v.contrasena,
         rol: v.rol,
-        telefono: v.telefono || null,
         activo: true,
       })
       .subscribe({
         next: (created) => {
-          this.usuarios.set([...this.usuarios(), created]);
+          this.usuarios.set([
+            ...this.usuarios(),
+            created,
+          ]);
+
           this.audit.select(created.id_usuario);
+
           void this.router.navigateByUrl('/app');
         },
-        error: (err: HttpErrorResponse) => this.snack.open(this.msg(err), 'Cerrar', { duration: 6000 }),
+
+        error: (err: HttpErrorResponse) =>
+          this.snack.open(
+            this.msg(err),
+            'Cerrar',
+            { duration: 6000 },
+          ),
       });
   }
 
   private msg(err: HttpErrorResponse): string {
     const d = err.error?.detail;
+
     if (typeof d === 'string') return d;
-    if (Array.isArray(d)) return d.map((x) => x.msg ?? JSON.stringify(x)).join('; ');
+
+    if (Array.isArray(d)) {
+      return d
+        .map((x) => x.msg ?? JSON.stringify(x))
+        .join('; ');
+    }
+
     return err.message;
   }
 }

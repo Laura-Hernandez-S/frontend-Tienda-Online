@@ -44,12 +44,12 @@ export class DetallePedidoDialogComponent implements OnInit {
   readonly pedidos = signal<PedidoRead[]>([]);
   readonly productos = signal<ProductoRead[]>([]);
 
+  // CORRECCIÓN: Usamos la estructura real del backend
   readonly form = this.fb.nonNullable.group({
     id_pedido: ['', Validators.required],
     id_producto: ['', Validators.required],
-    nombre: ['', Validators.required],
-    descripcion: [''],
-    estado: [''],
+    cantidad: [1, [Validators.required, Validators.min(1)]],
+    precio_unitario: [0, [Validators.required, Validators.min(0)]],
   });
 
   ngOnInit(): void {
@@ -66,9 +66,8 @@ export class DetallePedidoDialogComponent implements OnInit {
       this.form.patchValue({
         id_pedido: r.id_pedido,
         id_producto: r.id_producto,
-        nombre: r.nombre,
-        descripcion: r.descripcion ?? '',
-        estado: r.estado ?? '',
+        cantidad: r.cantidad,
+        precio_unitario: r.precio_unitario,
       });
     }
   }
@@ -88,9 +87,8 @@ export class DetallePedidoDialogComponent implements OnInit {
         .create({
           id_pedido: v.id_pedido,
           id_producto: v.id_producto,
-          nombre: v.nombre,
-          descripcion: v.descripcion || null,
-          estado: v.estado || null,
+          cantidad: v.cantidad,
+          precio_unitario: v.precio_unitario,
         })
         .subscribe({
           next: () => this.dialogRef.close(true),
@@ -102,9 +100,8 @@ export class DetallePedidoDialogComponent implements OnInit {
       .update(this.data.row!.id_detalle_pedido, {
         id_pedido: v.id_pedido,
         id_producto: v.id_producto,
-        nombre: v.nombre,
-        descripcion: v.descripcion || null,
-        estado: v.estado || null,
+        cantidad: v.cantidad,
+        precio_unitario: v.precio_unitario,
       })
       .subscribe({
         next: () => this.dialogRef.close(true),

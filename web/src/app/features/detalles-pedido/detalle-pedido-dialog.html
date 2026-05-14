@@ -2,32 +2,31 @@
 <mat-dialog-content class="dialog-body">
   <form [formGroup]="form" class="grid">
     <mat-form-field appearance="outline" class="span-2">
-      <mat-label>Pedido</mat-label>
+      <mat-label>Pedido (ID)</mat-label>
       <mat-select formControlName="id_pedido">
         @for (p of pedidos(); track p.id_pedido) {
-          <mat-option [value]="p.id_pedido">{{ p.nombre }} ({{ p.id_pedido.slice(0, 8) }}…)</mat-option>
+          <mat-option [value]="p.id_pedido">{{ p.id_pedido.slice(0, 8) }}…</mat-option>
         }
       </mat-select>
     </mat-form-field>
+    
     <mat-form-field appearance="outline" class="span-2">
       <mat-label>Producto</mat-label>
       <mat-select formControlName="id_producto">
         @for (p of productos(); track p.id_producto) {
-          <mat-option [value]="p.id_producto">{{ p.nombre }}</mat-option>
+          <mat-option [value]="p.id_producto">{{ p.nombre_producto }}</mat-option>
         }
       </mat-select>
     </mat-form-field>
-    <mat-form-field appearance="outline" class="span-2">
-      <mat-label>Nombre línea</mat-label>
-      <input matInput formControlName="nombre" />
+
+    <mat-form-field appearance="outline">
+      <mat-label>Cantidad</mat-label>
+      <input matInput type="number" formControlName="cantidad" min="1" />
     </mat-form-field>
-    <mat-form-field appearance="outline" class="span-2">
-      <mat-label>Descripción</mat-label>
-      <textarea matInput rows="2" formControlName="descripcion"></textarea>
-    </mat-form-field>
-    <mat-form-field appearance="outline" class="span-2">
-      <mat-label>Estado</mat-label>
-      <input matInput formControlName="estado" />
+
+    <mat-form-field appearance="outline">
+      <mat-label>Precio Unitario</mat-label>
+      <input matInput type="number" formControlName="precio_unitario" min="0" />
     </mat-form-field>
   </form>
 </mat-dialog-content>

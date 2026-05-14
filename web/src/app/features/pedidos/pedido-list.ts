@@ -32,7 +32,8 @@ export class PedidoListComponent implements AfterViewInit {
   private readonly dialog = inject(MatDialog);
   private readonly snack = inject(MatSnackBar);
 
-  readonly displayedColumns = ['nombre', 'id_usuario', 'estado', 'fecha_creacion', 'acciones'];
+  // CORRECCIÓN: Columnas reales de Pedido
+  readonly displayedColumns = ['id_pedido', 'id_usuario', 'total_pagado', 'fecha_creacion', 'acciones'];
   readonly dataSource = new MatTableDataSource<PedidoRead>([]);
   loading = true;
 
@@ -72,14 +73,15 @@ export class PedidoListComponent implements AfterViewInit {
 
   private open(data: PedidoDialogData): void {
     this.dialog
-      .open(PedidoDialogComponent, { width: '520px', data })
+      .open(PedidoDialogComponent, { width: '400px', data })
       .afterClosed()
       .pipe(filter(Boolean))
       .subscribe(() => this.reload());
   }
 
   eliminar(row: PedidoRead): void {
-    if (!confirm(`¿Eliminar pedido ${row.nombre}?`)) return;
+    // CORRECCIÓN: Ya no hay 'nombre', usamos el ID para mostrar qué borramos
+    if (!confirm(`¿Eliminar pedido ${this.shortId(row.id_pedido)}?`)) return;
     this.svc.delete(row.id_pedido).subscribe({
       next: () => {
         this.snack.open('Pedido eliminado', 'OK', { duration: 3000 });

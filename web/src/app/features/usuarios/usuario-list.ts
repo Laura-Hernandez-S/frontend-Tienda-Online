@@ -33,6 +33,7 @@ export class UsuarioListComponent implements AfterViewInit {
   private readonly snack = inject(MatSnackBar);
 
   readonly displayedColumns = [
+    'nombre_completo', // CORRECCIÓN
     'nombre_usuario',
     'email',
     'rol',
